@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1
+
+- Fixed HUD controls stopping after disconnecting/reconnecting, changing worlds, or otherwise recreating Valheim's in-game UI.
+- Added lightweight HUD-instance lifetime detection.
+- UI elements are now re-resolved once when a new HUD instance appears, without restoring the old periodic full-scene scan.
+- Existing HUD layout/config values are preserved across the re-resolution.
+
 ## 1.0.0
 
 Initial public release.

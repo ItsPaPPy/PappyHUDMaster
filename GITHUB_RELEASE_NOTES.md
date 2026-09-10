@@ -1,20 +1,16 @@
-# Pappy HUD Master v1.0.0
+# Pappy HUD Master v1.0.1
 
-Initial public release of **Pappy HUD Master**, a client-side visual HUD editor for Valheim 1.0.
+Bug-fix release.
 
-Move, scale, rotate, and adjust transparency for supported vanilla HUD elements directly in-game. Includes inventory, crafting, build menu, minimap, chat, boss health, status effects, and more.
+## Fixed
 
-### Highlights
+Pappy HUD Master now detects when Valheim destroys and recreates the in-game HUD, such as after:
 
-- Visual editor opened with **F7**
-- Drag-and-drop HUD positioning
-- Exact numeric positioning
-- Scale and rotation controls
-- Minimap, inventory, crafting, inventory-info, and build-menu transparency
-- Enter-to-type chat window positioning
-- Valheim 1.0 build-menu support
-- Gameplay mouse input is suppressed while editing
-- Persistent BepInEx configuration
-- Client-side only
+- a server disconnect/reconnect
+- changing worlds
+- returning to the main menu and joining again
+- other scene/UI recreation
 
-Tested with **Valheim 1.0.7** and **BepInExPack Valheim 5.4.2350**.
+The mod clears only its cached UI references and performs one fresh UI discovery pass for the new HUD instance. It does **not** bring back the old periodic full-scene scan that caused gameplay hitches.
+
+Existing saved positions, scale, rotation, and transparency settings are retained.

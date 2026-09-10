@@ -3,7 +3,7 @@ setlocal EnableExtensions
 
 REM ============================================================
 REM Pappy HUD Master - public build script
-REM Version 1.0.0
+REM Version 1.0.1
 REM
 REM This script intentionally does NOT depend on Gale or any
 REM specific mod manager.

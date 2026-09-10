@@ -17,7 +17,7 @@ namespace PappyHUDMaster
     {
         public const string PluginGuid = "pappy.valheim.hudmaster";
         public const string PluginName = "Pappy HUD Master";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.1";
 
         private static PappyHUDMasterPlugin Instance;
         private Harmony harmony;
@@ -104,6 +104,13 @@ namespace PappyHUDMaster
         private int selectedIndex;
         private bool initialResolveComplete;
         private float nextInitialResolveTime;
+
+        // Track the actual in-game HUD instance. A disconnect, reconnect,
+        // world change, or return to the menu destroys the old UI hierarchy.
+        // We only do one cheap exact-path check per second; a full UI scan
+        // still happens only once for each newly-created HUD instance.
+        private float nextHudLifetimeCheckTime;
+        private int trackedHudInstanceId;
 
         private GUIStyle titleStyle;
         private GUIStyle selectedStyle;
@@ -337,10 +344,17 @@ namespace PappyHUDMaster
                     ProcessKeyboardNudging();
             }
 
-            // IMPORTANT: 0.2.0 enumerated every RectTransform in the entire
-            // loaded game every second. On a live Valheim scene that can cause
-            // a visible periodic hitch. 0.2.1 resolves the static UI once and
-            // then stops scanning unless the user explicitly clicks Refresh.
+            // Watch only the exact HUD root so we can recover after a
+            // disconnect/reconnect or world/scene change. This is intentionally
+            // cheap and does NOT enumerate the UI hierarchy.
+            if (Time.unscaledTime >= nextHudLifetimeCheckTime)
+            {
+                nextHudLifetimeCheckTime = Time.unscaledTime + 1f;
+                CheckHudLifetime();
+            }
+
+            // A full RectTransform discovery pass happens only when a new
+            // in-game HUD needs to be resolved.
             if (!initialResolveComplete &&
                 Time.unscaledTime >= nextInitialResolveTime)
             {
@@ -448,6 +462,82 @@ namespace PappyHUDMaster
             Cursor.visible = true;
         }
 
+        private void CheckHudLifetime()
+        {
+            GameObject hud =
+                GameObject.Find(
+                    "_GameMain/LoadingGUI/PixelFix/IngameGui/HUD");
+
+            if (hud == null)
+            {
+                if (trackedHudInstanceId != 0)
+                {
+                    trackedHudInstanceId = 0;
+                    ResetUiResolution(
+                        "In-game HUD was destroyed; waiting for a new world/UI.");
+                }
+
+                return;
+            }
+
+            int currentHudInstanceId =
+                hud.GetInstanceID();
+
+            if (trackedHudInstanceId == 0)
+            {
+                trackedHudInstanceId =
+                    currentHudInstanceId;
+
+                // If targets were somehow left marked resolved while the old
+                // HUD was gone, force a fresh capture for this instance.
+                if (initialResolveComplete)
+                {
+                    ResetUiResolution(
+                        "New in-game HUD detected; rebuilding UI cache.");
+                }
+
+                return;
+            }
+
+            if (trackedHudInstanceId != currentHudInstanceId)
+            {
+                trackedHudInstanceId =
+                    currentHudInstanceId;
+
+                ResetUiResolution(
+                    "In-game HUD instance changed; rebuilding UI cache.");
+            }
+        }
+
+        private void ResetUiResolution(string reason)
+        {
+            if (editorOpen)
+                SetEditorOpen(false);
+
+            CleanupAllMinimapCompositors();
+
+            for (int i = 0; i < elements.Count; i++)
+            {
+                HudElement element = elements[i];
+
+                if (element == null)
+                    continue;
+
+                element.Transform = null;
+                element.TransformInstanceId = 0;
+                element.OriginalCaptured = false;
+                element.BackgroundGraphics.Clear();
+                element.OpacityCanvasGroup = null;
+            }
+
+            draggingSelected = false;
+            initialResolveComplete = false;
+            nextInitialResolveTime = 0f;
+
+            Logger.LogInfo(
+                "[Pappy HUD Master] " + reason);
+        }
+
         private void TryInitialResolve()
         {
             // Do not perform a large UI scan on the main menu.
@@ -456,6 +546,9 @@ namespace PappyHUDMaster
 
             if (hud == null)
                 return;
+
+            trackedHudInstanceId =
+                hud.GetInstanceID();
 
             int found = ResolveAllElementsOnce();
 

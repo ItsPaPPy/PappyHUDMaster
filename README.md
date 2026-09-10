@@ -125,17 +125,7 @@ Mods that replace or heavily restructure Valheim's vanilla UI may require additi
 
 ## Screenshots
 
-### Visual HUD Editor and Minimap Transparency
-
-The in-game editor lets you reposition HUD elements, enter exact values, adjust scale and rotation, and control supported transparency settings.
-
-![Pappy HUD Master minimap transparency and visual editor](screenshots/pappy_hud_master_minimap.png)
-
-### Ultrawide Layout Example
-
-Pappy HUD Master is especially useful on ultrawide displays, allowing inventory, crafting, minimap, hotbar, and other HUD elements to be moved closer to the center of the screen.
-
-![Pappy HUD Master ultrawide HUD layout](screenshots/pappy_hud_master_ultrawide.png)
+<!-- Add your screenshots here. GitHub-hosted images can also be referenced from the Hexium README. -->
 
 ## Source and issues
 
