@@ -1,0 +1,7 @@
+{
+  "name": "PappyHUDMaster",
+  "description": "Move, scale, rotate, and adjust transparency for Valheim 1.0 HUD elements with an in-game visual editor.",
+  "version_number": "1.0.0",
+  "website_url": "",
+  "dependencies": []
+}
