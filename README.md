@@ -2,7 +2,7 @@
 
 A client-side visual HUD editor for **Valheim 1.0**. Move, scale, rotate, and adjust transparency for vanilla HUD elements in real time without changing gameplay mechanics.
 
-Built and tested against **Valheim 1.0.12** with **BepInEx 5.4.23.5 / BepInExPack Valheim 5.4.2350**.
+Built and tested against **Valheim 1.0.7** with **BepInEx 5.4.23.5 / BepInExPack Valheim 5.4.2350**.
 
 The mod does not require a specific mod manager.
 
