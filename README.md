@@ -114,7 +114,7 @@ For UI objects that are dynamically spawned, use **REFRESH / FIND ACTIVE COPY** 
 ## Compatibility
 
 - Designed for **Valheim 1.0**
-- Tested on **Valheim 1.0.12**
+- Tested on **Valheim 1.0.15**
 - Client-side only
 - Does not require Jötunn
 - Does not require Configuration Manager
